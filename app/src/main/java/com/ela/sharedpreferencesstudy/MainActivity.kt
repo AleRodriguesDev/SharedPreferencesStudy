@@ -3,7 +3,9 @@ package com.ela.sharedpreferencesstudy
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import com.ela.sharedpreferencesstudy.databinding.ActivityMainBinding
+import com.google.android.material.snackbar.Snackbar
 
 class MainActivity : AppCompatActivity() {
 
@@ -36,12 +38,35 @@ class MainActivity : AppCompatActivity() {
         }
     }
     private fun salvar(cor:String){
-        binding.btTrocarCorFundo.setOnClickListener(){
-            binding.layoutPrincipal.setBackgroundColor(Color.parseColor(cor))
+        binding.layoutPrincipal.setBackgroundColor(Color.parseColor(cor))
+        binding.btTrocarCorFundo.setOnClickListener(){view ->
             val preferencias = getSharedPreferences(ARQUIVO_PREFERENCIAS, MODE_PRIVATE)
             val editor = preferencias.edit()
             editor.putString("cor", cor)
             editor.apply()
+
+            snackbar(view)
+
+        }
+    }
+    private fun snackbar (view:View){
+        var snackbar = Snackbar.make(view, "Cor de fundo alterada com sucesso", Snackbar.LENGTH_INDEFINITE)
+        snackbar.setAction("Ok"){
+        }
+        snackbar.setActionTextColor(Color.BLACK)
+        snackbar.setBackgroundTint(Color.WHITE)
+        snackbar.setTextColor(Color.BLACK)
+        snackbar.show()
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        val preferencias = getSharedPreferences(ARQUIVO_PREFERENCIAS, MODE_PRIVATE)
+        val cor = preferencias.getString("cor", "")
+
+        if (cor!!.isNotEmpty()){
+            binding.layoutPrincipal.setBackgroundColor(Color.parseColor(cor))
         }
     }
 }
